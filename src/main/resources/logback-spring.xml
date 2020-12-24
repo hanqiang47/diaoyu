@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <property name="LOG_PATH" value="logs/${springAppName}"/>
+
+    <!-- 日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+    <!-- springboot 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN_COLORFUL"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <!-- 普通日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+    <property name="CONSOLE_LOG_PATTERN_NEW_LINE"
+              value="%n%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%logger{50}] %n%-5level: %msg%n"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" charset="utf-8">
+            <pattern>${CONSOLE_LOG_PATTERN_COLORFUL}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 生成 INFO 级别的日志文件，只记录 INFO 级别的日志 -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件输出的文件名 -->
+            <FileNamePattern>${LOG_PATH}/info.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <!-- 日志文件保留天数 -->
+            <MaxHistory>365</MaxHistory>
+            <MaxFileSize>50MB</MaxFileSize>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" charset="utf-8">
+            <pattern>${CONSOLE_LOG_PATTERN_NEW_LINE}</pattern>
+        </encoder>
+        <!-- 打印日志级别 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 生成 WARN 级别的日志文件，只记录 WARN 级别的日志 -->
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件输出的文件名 -->
+            <FileNamePattern>${LOG_PATH}/warn.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <!-- 日志文件保留天数 -->
+            <MaxHistory>365</MaxHistory>
+            <MaxFileSize>50MB</MaxFileSize>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" charset="utf-8">
+            <pattern>${CONSOLE_LOG_PATTERN_NEW_LINE}</pattern>
+        </encoder>
+        <!-- 打印日志级别 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 生成 ERROR 级别的日志文件，只记录 ERROR 级别的日志 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件输出的文件名 -->
+            <FileNamePattern>${LOG_PATH}/error.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <!-- 日志文件保留天数 -->
+            <MaxHistory>365</MaxHistory>
+            <MaxFileSize>50MB</MaxFileSize>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" charset="utf-8">
+            <pattern>${CONSOLE_LOG_PATTERN_NEW_LINE}</pattern>
+        </encoder>
+        <!-- 打印日志级别 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="ASYNC-INFO" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志。默认的，如果队列的 80% 已满，则会丢弃 TRACT、DEBUG、INFO 级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的长度，该值会影响性能。默认值为 256 -->
+        <queueSize>256</queueSize>
+        <!-- 添加附加的 appender，最多只能添加一个-->
+        <appender-ref ref="INFO"/>
+    </appender>
+
+    <appender name="ASYNC-WARN" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志。默认的，如果队列的 80% 已满，则会丢弃 TRACT、DEBUG、INFO 级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的长度，该值会影响性能。默认值为 256 -->
+        <queueSize>256</queueSize>
+        <!-- 添加附加的 appender，最多只能添加一个-->
+        <appender-ref ref="WARN"/>
+    </appender>
+
+    <appender name="ASYNC-ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志。默认的，如果队列的 80% 已满，则会丢弃 TRACT、DEBUG、INFO 级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的长度，该值会影响性能。默认值为 256 -->
+        <queueSize>256</queueSize>
+        <!-- 添加附加的 appender，最多只能添加一个-->
+        <appender-ref ref="ERROR"/>
+    </appender>
+
+
+    <springProfile name="local, dev, stage, prod">
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="x">
+        <root level="INFO">
+            <appender-ref ref="ASYNC-INFO"/>
+            <appender-ref ref="ASYNC-WARN"/>
+            <appender-ref ref="ASYNC-ERROR"/>
+        </root>
+    </springProfile>
+
+</configuration>

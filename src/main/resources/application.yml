@@ -1,0 +1,46 @@
+server:
+  port: 8999
+spring:
+  application:
+    name: diaoyu
+  management:
+    security:
+    enabled: false
+  datasource:
+    username: root
+    password: Diaoyu2020
+    url: jdbc:mysql://42.192.53.160:3306/diaoyu?autoReconnect=TRUE&useUnicode=TRUE&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: ${spring.datasource.url}
+  flyway:
+    baseline-version: 1
+    baseline-on-migrate: true
+  profiles:
+    active: dev
+
+mybatis-plus:
+  configuration:
+    cache-enabled: true
+    lazyLoadingEnabled: true
+    map-underscore-to-camel-case: false
+    multipleResultSetsEnabled: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+  global-config:
+  #驼峰下划线转换
+    db-column-underline: true
+    id-type: 0
+    refresh-mapper: true
+  mapper-locations: classpath*:mapper/*.xml
+  typeAliasesPackage: com.github.jingou.model
+  sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+
+pagehelper.helperDialect: mysql
+jwt:
+  header: Authorization   #http请求头所需要的字段
+  secret: mySecret        #jwt秘钥
+  expiration: 1800     #7天 单位:秒
+  auth-path: login         #认证请求的路径
+  md5-key: randomKey      #md5加密混淆key
+
+diaoyu:
+  swagger-open: true
