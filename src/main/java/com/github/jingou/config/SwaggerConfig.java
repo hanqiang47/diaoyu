@@ -36,7 +36,7 @@ public class SwaggerConfig {
         List<RequestParameter> list = new ArrayList<>();
         list.add(new RequestParameterBuilder()
                 .in(ParameterType.HEADER)
-                .name("accessToken")
+                .name("authorization")
                 .description("token统一认证参数")
                 .required(false)
                 .build());
